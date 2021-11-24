@@ -12,15 +12,19 @@
       <button @click="createPost">Compartilhar</button>
     </div>
 
-    <div class="postarea">
-      <article class="post">
-        <h1>Matheus</h1>
+    <div class="postarea loading" v-if="loading">
+      <h1>Buscando posts...</h1>
+    </div>
+
+    <div class="postarea" v-else>
+      <article class="post" v-for="post in posts" :key="post.id">
+        <h1>{{post.autor}}</h1>
         <p>
-          Olá, este é meu primeiro post
+          {{post.content | postLength}}
         </p>
 
         <div class="action-post">
-          <button>20 curtidas</button>
+          <button>{{post.likes === 0 ? 'Curtir' : post.likes + ' Curtidas'}}</button>
           <button>Veja post completo</button>
         </div>
       </article>
@@ -37,12 +41,32 @@ export default {
     return{
       input: '',
       user: {},
+      loading: true,
+      posts: [],
     }
   },
-  created(){
+  async created(){
     const user = localStorage.getItem('devpost');
     this.user = JSON.parse(user);
-  },
+    
+    await firebase.firestore().collection('posts')
+      .onSnapshot((doc)=>{
+        this.posts = [];
+
+        doc.forEach((item)=>{
+          this.posts.push({
+            id: item.id,
+            autor: item.data().autor,
+            content: item.data().content,
+            likes: item.data().likes,
+            created: item.data().created,
+            userId: item.data().userId
+          });
+        })
+
+        this.loading = false;
+      })
+      },
   methods:{
     async createPost(){
       if(this.input === ''){
@@ -64,6 +88,14 @@ export default {
       .catch((error)=>{
         alert('Erro ao publicar o post: ', error);
       })
+    }
+  },
+  filters:{
+    postLength(valor){
+      if(valor.length < 200){
+        return valor;
+      }
+      return `${valor.substring(0, 200)}...`
     }
   }
 }
