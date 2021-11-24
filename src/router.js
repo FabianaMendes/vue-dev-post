@@ -38,7 +38,7 @@ const router = new Router({
 router.beforeEach((to, from, next)=>{
   const requiresAuth = to.matched.some( x => x.meta.requiresAuth);
 
-  if(requiresAuth && !firebase.auth().currentUser){
+  if(requiresAuth && !firebase.auth().currentUser){ //se a rota é privada mas não há usuário logado
     next('/login');
   }else{
     next();
