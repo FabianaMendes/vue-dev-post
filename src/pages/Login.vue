@@ -3,7 +3,7 @@
 
     <div class="loginArea" v-if="login">
       <h1>Entrar</h1>
-      <form>
+      <form @submit.prevent="handleLogin">
         <input type="text" placeholder="email@email.com" v-model="email"/>
         <input type="password" placeholder="Sua senha..." v-model="password"/>
         <button type="submit">Acessar</button>
@@ -13,7 +13,7 @@
 
     <div class="loginArea" v-else>
       <h1>Cadastrar</h1>
-      <form>
+      <form @submit.prevent="handleRegister">
         <input type="text" placeholder="Nome" v-model="nome"/>
         <input type="text" placeholder="email@email.com" v-model="email"/>
         <input type="password" placeholder="Sua senha..." v-model="password"/>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import firebase from '../services/firebaseConnection';
 
 export default {
   name: 'Login',
@@ -43,7 +44,48 @@ export default {
       this.nome = '';
       this.email = '';
       this.password = '';
-    }
+    },
+
+    async handleRegister(){
+      const { user } = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+
+      await firebase.firestore().collection('users')
+      .doc(user.uid)
+      .set({
+        nome: this.nome,
+      })
+      .then(async ()=>{
+        const usuarioLogado = {
+          uid: user.uid,
+          nome: this.nome
+        };
+
+        await localStorage.setItem('devpost', JSON.stringify(usuarioLogado))
+      })
+      .catch((error)=>{
+        console.log(error);
+      })
+
+      this.$router.push('/');
+    },
+
+    async handleLogin(){
+      const { user } = await firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+    
+      const userProfile = await firebase.firestore().collection('users')
+      .doc(user.uid).get();
+
+      const usuarioLogado = {
+        uid: user.uid,
+        nome: userProfile.data().nome
+      };
+
+      await localStorage.setItem('devpost', JSON.stringify(usuarioLogado));
+
+      this.$router.push('/');
+    },
+
+
   }
 }
 </script>
