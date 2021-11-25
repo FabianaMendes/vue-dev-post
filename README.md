@@ -13,9 +13,7 @@ Achei muito divertido e dá pra acrescentar bastante coisa nesse projeto!
 
 ⚡✅  Finalizado - Concluído  ✅⚡
 
-- Para ver o projeto em produção 
-<a href="https://fm-dev-post.netlify.app" target="_blank">clique aqui</a>
-[clique aqui](https://fm-dev-post.netlify.app){:target="_blank"} 
+- Para ver o projeto em produção [clique aqui](https://fm-dev-post.netlify.app) 
 
 ## Project setup
 ```
