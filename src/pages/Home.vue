@@ -5,7 +5,7 @@
       <h2>Bem vindo de volta!</h2>
       <span>Compartilhe seu dia</span>
       <textarea
-        placeholder="O que está fazendo hoje?"
+        :placeholder="`O que está fazendo hoje, ${user.nome}?`"
         rows="15"
         v-model="input"
       ></textarea>

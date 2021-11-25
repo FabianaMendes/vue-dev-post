@@ -6,7 +6,7 @@
 
     <div v-else>
       <div class="headerPerfil">
-        <h2>Olá {{nome}}</h2>
+        <h2>Perfil de {{nome}}</h2>
         <span>Já fez <strong>{{this.posts.length}}</strong> posts</span>
       </div>
 
